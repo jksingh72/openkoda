@@ -1,0 +1,6 @@
+a => a.text("description")
+    .datalist("statuses", d => d.toLinkedMap(["TODO","DONE"]))
+    .dropdown("status", "statuses")
+    .checkbox("archived")
+    .manyToOne("clientId","client")
+    .manyToOne("userId","user")

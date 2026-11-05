@@ -1,0 +1,7 @@
+a => a.text("partyId")
+	.text("partyLegalName")
+    .text("partyIntExtFlag")
+    .text("partyCountryOfLocation")
+    .text("partyOrganisationType")
+    .text("partyTexNumber")
+    .text("partytLegalAdress")

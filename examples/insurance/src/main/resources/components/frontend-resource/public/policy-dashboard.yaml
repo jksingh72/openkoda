@@ -1,0 +1,13 @@
+!!com.openkoda.service.export.dto.FrontendResourceConversionDto
+"accessLevel": "PUBLIC"
+"content": "templates/frontend-resource/public/policy-dashboard.json"
+"controllerEndpoints": [
+  ]
+"embeddable": !!bool "false"
+"includeInSitemap": !!bool "false"
+"module": "core"
+"name": "policy-dashboard"
+"organizationId": !!null "null"
+"requiredPrivilege": !!null "null"
+"resourceType": "DASHBOARD"
+"type": "JSON"

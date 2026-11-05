@@ -1,0 +1,21 @@
+<!--DEFAULT CONTENT-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="en" layout:decorate="~{${defaultLayout}}">
+<body>
+<div class="container">
+    <h1 layout:fragment="title"/>
+    <div layout:fragment="content">
+        <div class="card shadow mb-4" th:fragment="widget">
+		  <div class="card-header d-flex flex-row align-items-center">
+			<h6 class="m-0 font-weight-bold">Calendar</h6>
+		  </div>
+		  <div class="card-body">
+			<iframe src="https://calendar.google.com/calendar/embed?src=c_e1a6a60fb57fe613142ef2d32128e96bd2b59ec35df76e6539c6e2949bbe5f07%40group.calendar.google.com&ctz=Europe%2FWarsaw" style="border: 0" width="600" height="600" frameborder="0" scrolling="no"></iframe>
+		  </div>
+
+	  </div>
+    </div>
+</div>
+</body>
+</html>
+	  

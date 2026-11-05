@@ -1,0 +1,119 @@
+<!--DEFAULT CONTENT-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="en" layout:decorate="~{${defaultLayout}}">
+<body>
+<div class="container">
+    <h1 layout:fragment="title"/>
+    <div layout:fragment="content" th:attr="data-menu-item=${'payment'}">
+	  <style>
+		  .spinner-border {
+			  display: none;
+		  }
+		  .loading .spinner-border {
+			  display: inline-block;
+		  }
+		  .loading .btn-text {
+			  display: none;
+		  }
+	  </style>
+	  <form th:replace="~{generic-forms::generic-form(${paymentForm}, 'paymentForm', ${@url.form(organizationEntityId, 'payment', paymentId)}, '', '', 'Payment', #{template.save}, true)}" />
+	  <div class="card shadow mb-4">
+		  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+			  <h6 class="m-0 font-weight-bold" >Payment With Quickbooks</h6>
+		  </div>
+		  <div class="card-body">
+			<button class="btn btn-primary" id="authButton">Authenticate with QuickBooks</button>
+			<button class="btn btn-primary" id="createPaymentButton" type="button" disabled>
+			  	<span class="btn-text">Create Payment</span>
+            	<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+			</button>
+			<script th:inline="javascript">
+				const CLIENT_ID = 'ABpWKfecanaRa1pUfHhg5sPYRCmqfV3nSu9aZRxBGidX3ufkHU';
+				const CLIENT_SECRET = 'lF6517BxCDsQvoHfQiUmReJatDC03DG9BbLNG8Fb';
+				const REDIRECT_URI = window.location.href.split('?')[0];
+				const REALM_ID = '9341452574840075';
+				const STATE = [[${paymentId}]]; 
+
+				let accessToken = '';
+
+				document.getElementById('authButton').onclick = function() {
+					const authUrl = `https://appcenter.intuit.com/connect/oauth2?client_id=${CLIENT_ID}&response_type=code&scope=com.intuit.quickbooks.accounting&state=${STATE}&redirect_uri=${REDIRECT_URI}`;
+					window.location.href = authUrl;
+				};
+
+				// Extract the authorization code and state from the URL
+				function getAuthorizationDetails() {
+					const urlParams = new URLSearchParams(window.location.search);
+					return {
+						code: urlParams.get('code'),
+						state: urlParams.get('state')
+					};
+				}
+
+				async function getAccessToken(authCode) {
+					const tokenUrl = 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer';
+					const proxyUrl = 'https://cors-anywhere.herokuapp.com/'; // Use a CORS proxy
+					const params = new URLSearchParams({
+						grant_type: 'authorization_code',
+						code: authCode,
+						redirect_uri: REDIRECT_URI,
+					});
+
+					const headers = new Headers({
+						'Authorization': 'Basic ' + btoa(`${CLIENT_ID}:${CLIENT_SECRET}`),
+						'Content-Type': 'application/x-www-form-urlencoded',
+					});
+
+					const response = await fetch(proxyUrl + tokenUrl, {
+						method: 'POST',
+						headers: headers,
+						body: params,
+					});
+
+					const data = await response.json();
+					accessToken = data.access_token;
+					console.log(accessToken);
+					document.getElementById('createPaymentButton').disabled = false;
+				}
+				
+			  	let policyId = /*[[${payment.policyId}]]*/ null;
+				document.getElementById('createPaymentButton').onclick = async function(event) {
+				  	event.target.parentElement.classList.add('loading')
+					const paymentData = {
+						"CustomerRef": {
+							"value": "58" // Replace with actual Customer ID
+						},
+						"TotalAmt": [[${payment.amount}]], // Payment amount
+						"PrivateNote": "(Insurance Demo " + new Date().toLocaleString() + ") " + (policyId !== null ? `Policy ${policyId}` : '')
+					};
+
+					const proxyUrl = 'https://cors-anywhere.herokuapp.com/'; // Use a CORS proxy
+					const response = await fetch(proxyUrl + `https://sandbox-quickbooks.api.intuit.com/v3/company/${REALM_ID}/payment`, {
+						method: 'POST',
+						headers: {
+							'Authorization': `Bearer ${accessToken}`,
+							'Content-Type': 'application/json',
+							'Accept': 'application/json'
+						},
+						body: JSON.stringify(paymentData),
+					});
+
+					const result = await response.json();
+					console.log(result);
+			  		event.target.parentElement.classList.remove('loading');
+				};
+
+				window.onload = function() {
+					const { code, state } = getAuthorizationDetails();
+					if (code && state === STATE.toString()) {
+						getAccessToken(code);
+					}
+				};
+			</script>
+		  </div>
+
+	  </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!--DEFAULT CONTENT-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="en" layout:decorate="~{${defaultLayout}}">
+<body>
+<div class="container">
+    <h1 layout:fragment="title"/>
+    <div layout:fragment="content">
+	    <script>
+		  var notesEndpoint = {};
+		  notesEndpoint.appendNote = function(response) {
+			$(`<li>${response.noteContent}</li>`).prependTo('#notesEndpointNotes');
+			$('#noteModal').modal('hide');
+		  }
+	    </script>
+        <div class="card shadow mb-4">
+		  <div class="card-header d-flex flex-row align-items-center">
+			<h6 class="m-0 font-weight-bold">Notes</h6>
+			<div class="card-header-buttons">
+			  	<!-- Button trigger modal -->
+                    <button type="button" class="btn btn-sm btn-primary"
+                            data-toggle="modal" data-target="#noteModal">
+                        New
+                    </button>
+			</div>
+		  </div>
+		  <div class="card-body">
+			<ul id="notesEndpointNotes" th:if="${#lists.size(notes) > 0}">
+			  <li th:each="note : ${notes}" th:text="${note.getContent()}"></li>
+			</ul>
+
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="noteModal" tabindex="-1" role="dialog" aria-labelledby="noteModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <form th:object="${noteForm}" action="../../cn/notes/addNote" method="post">
+								<input th:replace="~{forms::csrf}"/>  
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="noteModalLabel">New Note</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                        <input type="hidden" name="frontendMappingDefinition" value="note">
+                                        <input type="hidden" id="clientId" th:name="${ 'dto[clientId]'}" th:value="${clientId}"/>
+                                        <input type="hidden" id="policyId" th:name="${ 'dto[policyId]'}" th:value="${policyId}"/>
+                                        <div class="form-group">
+                                            <label for="content" class="col-form-label">Content:</label>
+                                            <textarea class="form-control" id="content" th:name="${ 'dto[content]'}"></textarea>
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" onclick="app.submitAndCallback(this.form, notesEndpoint.appendNote)" class="btn btn-primary">Add</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+		  </div>
+
+	  </div>
+    </div>
+</div>
+</body>
+</html>

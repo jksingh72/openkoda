@@ -1,0 +1,109 @@
+<!--DEFAULT CONTENT-->
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="en" layout:decorate="~{${defaultLayout}}">
+<body>
+<div class="container">
+    <h1 layout:fragment="title"/>
+    <div layout:fragment="content">
+        <div class="card shadow mb-4 h-100">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold" th:text="${title}">Title</h6>
+			  	<div class="card-header-buttons">
+					<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#taskModal">Add Task</button>
+			  	</div>
+            </div>
+
+            <div class="card-body">
+                
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>task</th>
+                            <th>status</th>
+                            <th>archive</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="task,it : ${tasks.content}">
+                            <td>
+                                <i class="fa-solid fa-list-check" style="color: #16a0b2;"></i>
+                                <span th:text="${task.description}"></span>
+                            </td>
+                            <td>
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-sm">
+                                            <input th:replace="~{forms::single-post-toggle-like-checkbox-with-callback(
+                                                        @{../../cn/tasks/toggleStatus(id=${task.id}, status=${task.status})},
+														 'status',
+														 ${task.status == 'DONE'},
+														 ${task.id},
+														 'a => console.log(a)',
+														 false)}"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm">
+                                            <span th:text="${task.status}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <a th:replace="~{forms::single-nostyle-button-post-form-with-confirm-class(
+                                        @{../../cn/tasks/archive(id=${task.id})},
+                                        '<i class=&quot;fa-solid fa-trash-can&quot;></i>',
+                                        'Task will be archived. Are you sure?',
+                                        'd-inline-flex',
+                                        'bg-transparent border-0 pr-0 font-weight-normal ml-2 text-danger')}"/>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+ 				<div th:with="paramValue=${param['clientId']}">
+                    <nav th:replace="~{tables::tablenav-with-query-param('task', ${tasks}, 'clientId', ${paramValue})}"></nav>
+                </div>
+
+                <!-- Modal -->
+                <div class="modal fade" id="taskModal" tabindex="-1" role="dialog" aria-labelledby="taskModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <form th:object="${taskForm}" th:action="${'../../cn/tasks/addTask'}" method="post" id="createNewTask">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="taskModalLabel">New Task</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="hidden" name="frontendMappingDefinition" value="task">
+                                    <input type="hidden" id="clientId" th:name="${ 'dto[clientId]'}" th:value="${client_id}"/>
+                                    <input type="hidden" id="userId" th:name="${ 'dto[userId]'}" th:value="${@user.getUserId()}"/>
+                                    <input type="hidden" id="archived" th:name="${ 'dto[archived]'}" value="false"/>
+                                    <input type="hidden" id="status" th:name="${ 'dto[status]'}" value="TODO"/>
+                                    <div class="form-group">
+                                        <label for="description" class="col-form-label">Description:</label>
+                                        <textarea class="form-control" id="description" th:name="${ 'dto[description]'}"></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" onclick="app.submitAndCallback($('#createNewTask'), 'alert(\'Task added\')');">Add</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

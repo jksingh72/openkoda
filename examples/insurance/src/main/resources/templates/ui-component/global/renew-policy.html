@@ -1,0 +1,12 @@
+<!--DEFAULT CONTENT-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="en" layout:decorate="~{${defaultLayout}}">
+<body>
+<div class="container">
+    <h1 layout:fragment="title"/>
+    <div layout:fragment="content"  th:attr="data-menu-item='quote'">
+	    <th:block th:replace="~{generic-forms::generic-form(${organizationRelatedForm}, 'organizationRelatedForm', ${@url.form(organizationEntityId, 'quote', null)}, '', '', 'Quote', 'Save', true)}"/>
+    </div>
+</div>
+</body>
+</html>

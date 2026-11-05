@@ -1,0 +1,53 @@
+<!--DEFAULT CONTENT-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="en" layout:decorate="~{${defaultLayout}}">
+<body>
+<div class="container">
+    <h1 layout:fragment="title"/>
+    <div layout:fragment="content">
+	  <div class="card shadow mb-4">
+		<th:block th:if="${policy != null}">
+		  <div class="card-header d-flex flex-row align-items-center">
+			<h1 class="text-primary font-weight-bold" th:text="${policy.policyName != null ? policy.policyName : 'missing policy name'}"></h1>
+			<div class="card-header-buttons">
+			  <a class="btn-primary btn btn-sm ml-4" th:href="${'/html/policy/' + policy.id + '/settings'}" th:text="#{template.edit}">Edit</a>
+			</div>
+		  </div>
+		  <div class="card-body">
+			<div class="table-responsive">
+			  <table class="table table-hover">
+				<tr><td class="font-weight-bold text-sm" width="30%">DESCRIPTION</td><td th:text="${policy.policyDescription}"></td></tr>
+				<tr><td class="font-weight-bold text-sm" width="30%">STATUS</td><td class="font-weight-bold text-primary" th:text="${policy.status}"></td></tr>
+				<tr><td class="font-weight-bold text-sm" width="30%">TYPE</td><td class="font-weight-bold text-primary" th:text="${policy.policyType}"></td></tr>
+			  </table>
+			</div>
+			<h4 class="font-weight-bold">Policy Details</h4>
+			<div class="table-responsive">
+			  <table class="table table-hover">
+				<tr><td class="font-weight-bold text-sm" width="30%">START DATE</td><td th:text="${policy.startDate}"></td><td></td></tr>
+				<tr><td class="font-weight-bold text-sm" width="30%">END DATE</td><td th:text="${policy.endDate}"></td><td></td></tr>
+				<tr><td class="font-weight-bold text-sm" width="30%">COVERAGE START DATE</td><td th:text="${policy.coverageStartDate}"></td><td></td></tr>
+				<tr><td class="font-weight-bold text-sm" width="30%">COVERAGE END DATE</td><td th:text="${policy.coverageEndDate}"></td><td></td></tr>
+				<tr><td class="font-weight-bold text-sm" width="30%">PREMIUM</td><td th:text="${#numbers.formatCurrency(policy.premium)}"></td><td></td></tr>
+				<tr><td class="font-weight-bold text-sm" width="30%">PREMIUM CURRENCY</td><td th:text="${policy.premiumCurrency}"></td><td></td></tr>
+				<tr><td class="font-weight-bold text-sm" width="30%">PREMIUM PAYMENT TYPE</td><td th:text="${policy.premiumPaymentType}"></td><td></td></tr>
+				<tr th:if="${client != null}"><td class="font-weight-bold text-sm" width="30%">CLIENT</td><td th:text="${client.companyName != null ? client.companyName : client.firstName + ' ' + client.lastName}"></td><td></td></tr>
+				<tr th:if="${agent != null}"><td class="font-weight-bold text-sm" width="30%">AGENT</td><td th:text="${(agent?.firstName : '') + ' ' + (agent?.lastName : '')}"></td><td></td></tr>
+				<tr><td class="font-weight-bold text-sm" width="30%">INSURER</td><td th:text="${policy.insurer}"></td><td></td></tr>
+				<tr><td class="font-weight-bold text-sm" width="30%">PRODUCT ID</td><td th:text="${policy.productId}"></td><td></td></tr>
+<!-- 				<tr><td class="font-weight-bold text-sm" width="30%">DISCOUNT VALUE</td><td th:text="${policy.discountValue}"></td><td></td></tr> -->
+			  </table>
+			</div>
+		  </div>
+		  
+		</th:block>
+		<th:block th:unless="${policy != null}">
+		  <div class="card-body">
+			No Policy available in this view.
+		  </div>
+		</th:block>
+	  </div>
+    </div>
+</div>
+</body>
+</html>

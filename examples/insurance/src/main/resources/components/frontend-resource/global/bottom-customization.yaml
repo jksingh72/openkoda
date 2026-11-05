@@ -1,0 +1,13 @@
+!!com.openkoda.service.export.dto.FrontendResourceConversionDto
+"accessLevel": "GLOBAL"
+"content": "templates/frontend-resource/global/bottom-customization.html"
+"controllerEndpoints": [
+  ]
+"embeddable": !!bool "false"
+"includeInSitemap": !!bool "false"
+"module": "core"
+"name": "bottom-customization"
+"organizationId": !!null "null"
+"requiredPrivilege": !!null "null"
+"resourceType": "RESOURCE"
+"type": "HTML"

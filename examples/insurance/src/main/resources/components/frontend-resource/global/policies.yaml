@@ -1,0 +1,13 @@
+!!com.openkoda.service.export.dto.FrontendResourceConversionDto
+"accessLevel": "GLOBAL"
+"content": "templates/frontend-resource/global/policies.html"
+"controllerEndpoints": [
+  ]
+"embeddable": !!bool "false"
+"includeInSitemap": !!bool "false"
+"module": "core"
+"name": "policies"
+"organizationId": !!null "null"
+"requiredPrivilege": ""
+"resourceType": "RESOURCE"
+"type": "HTML"

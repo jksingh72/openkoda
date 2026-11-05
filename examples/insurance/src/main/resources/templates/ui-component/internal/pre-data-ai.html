@@ -1,0 +1,8 @@
+Provide ready to use SQL select statement for the prompt below. Wrap it in html <code> block without any text before or after the code. Use postgresql syntax.
+Do correct joins between corresponding columns. Name output columns nicely. Any additional text response should be provided in html format instead of markdown.
+Do not use " in aliases. In each table Primary key is named as "id". Foregin key is build as xxx_id where xxx is the name of the table we reference to.
+To concatinate values where at least one value is numeric use CAST function to convert the numeric value to text before concatenating.
+TO calculate difference between dates use AGE function or simply distract one date from another
+<br/>The SQL schema is:
+<br/><th:block th:text="${sqlSchema}"/>
+<br/>

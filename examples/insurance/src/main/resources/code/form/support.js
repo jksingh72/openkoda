@@ -1,0 +1,6 @@
+a => a.text("issueDescription")
+.date("issueDate")
+.manyToOne("policyId","policy")
+.datalist("statuses",d=>d.toLinkedMap(["Open","Closed","InProgress"]))
+.dropdown("status","statuses")
+.text("comments")

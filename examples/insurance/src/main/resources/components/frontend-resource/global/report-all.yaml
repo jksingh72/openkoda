@@ -1,0 +1,13 @@
+!!com.openkoda.service.export.dto.FrontendResourceConversionDto
+"accessLevel": "GLOBAL"
+"content": "templates/frontend-resource/global/report-all.html"
+"controllerEndpoints": [
+  ]
+"embeddable": !!bool "false"
+"includeInSitemap": !!bool "false"
+"module": "core"
+"name": "report-all"
+"organizationId": !!null "null"
+"requiredPrivilege": !!null "null"
+"resourceType": "RESOURCE"
+"type": "HTML"

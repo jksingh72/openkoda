@@ -1,0 +1,7 @@
+a => a.text("firstName")
+                    .text("lastName")
+                    .text("contactNumber")
+                    .text("email")
+                    .number("commissionRate")
+                    .text("uniqueAttribute")
+                    .files("filesId", (f,r) => r.getFileDtos(f.entity), "image/png,image/jpeg,application/pdf")

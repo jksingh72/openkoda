@@ -1,0 +1,7 @@
+!!com.openkoda.service.export.dto.ServerJsConversionDto
+"arguments": !!null "null"
+"code": "code/server-side/initRegisterForm.js"
+"model": "{\"registerForm@com.openkoda.form.RegisterUserForm\" : {}}"
+"module": "core"
+"name": "initRegisterForm"
+"organizationId": !!null "null"

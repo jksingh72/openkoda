@@ -1,0 +1,63 @@
+<!--DEFAULT CONTENT-->
+<!DOCTYPE html>
+<html
+		xmlns:th="http://www.thymeleaf.org"
+		xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="en" layout:decorate="~{${defaultLayout}}">
+<body>
+<div class="container">
+	<h1 layout:fragment="title"/>
+	<div layout:fragment="content">
+	  	<script>
+		var sendMessageScript = {
+		  "callback": function(result) {
+			$('#sendMessageModal').modal('hide');
+			alert("Email sent");
+		  }
+		}
+	  </script>
+		<div class="card shadow mb-4 h-100">
+			<div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+				<h6 class="m-0 font-weight-bold" th:text="${title}">Title</h6>
+			</div>
+			<div class="card-body">
+				<!-- card content html -->
+
+				<button type="button" class="bg-transparent border-0 pr-0 font-weight-normal ml-2 text-primary" data-toggle="modal" data-target="#sendMessageModal">
+					<i class="fa-solid fa-envelope fa-2xl"></i>
+				</button>
+
+				<!-- Modal -->
+				<div class="modal fade" id="sendMessageModal" tabindex="-1" role="dialog" aria-labelledby="sendMessageModalLabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+
+							<form action="../../cn/send-message" method="post">
+							  <input th:replace="~{forms::csrf}"/>
+								<div class="modal-header">
+									<h5 class="modal-title" id="sendMessageModalLabel">Send Email</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<input type="hidden" id="clientId" name="clientId" th:value="${client_id}"/>
+									<div class="form-group">
+										<textarea class="form-control" type="text" id="message" name="message" required placeholder="type email"></textarea>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button th:disabled="${isDisabled}" onclick="app.submitAndCallback(this.form, sendMessageScript.callback)" class="btn-primary btn btn-sm" type="button">Send</button>
+								</div>
+							</form>
+
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

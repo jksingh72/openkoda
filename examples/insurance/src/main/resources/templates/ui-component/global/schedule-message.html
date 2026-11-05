@@ -1,0 +1,236 @@
+<!--DEFAULT CONTENT-->
+<!DOCTYPE html>
+<html
+		xmlns:th="http://www.thymeleaf.org"
+		xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="en" layout:decorate="~{${defaultLayout}}">
+<body>
+<div class="container">
+	<h1 layout:fragment="title"/>
+	<div layout:fragment="content">
+		<style>
+			.modal-footer, .modal-header {
+			  border: none;
+		  	}
+		</style>
+	  	<script>
+		var scheduleEmailScript = {
+		  "callback": function(result) {
+			$('#scheduleEmailModal').modal('hide');
+			alert("Email scheduled");
+		  }
+		}
+	  </script>
+		<div class="card shadow mb-4 h-100">
+			<div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+				<h6 class="m-0 font-weight-bold">Schedule Email</h6>
+			</div>
+			<div class="card-body">
+				<!-- card content html -->
+				<button type="button" class="bg-transparent border-0 pr-0 font-weight-normal ml-2 text-primary" data-toggle="modal" data-target="#scheduleEmailModal">
+					<i class="fa-regular fa-envelope fa-2xl"></i>
+					<i class="fa-solid fa-clock fa-xs"></i>
+				</button>
+
+				<!-- Modal -->
+				<div class="modal fade" id="scheduleEmailModal" tabindex="-1" role="dialog" aria-labelledby="scheduleEmailModalLabel" aria-hidden="true">
+					<div class="modal-dialog modal-lg" role="document">
+						<div class="modal-content">
+
+							<form action="../../cn/schedule-message" method="post">
+							  <input th:replace="~{forms::csrf}"/>
+								<div class="modal-header">
+									<h5 class="modal-title" id="scheduleEmailModalLabel">Schedule Email</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+										<input type="hidden" id="clientId" name="clientId" th:value="${client_id}"/>
+										<div class="form-group">
+											<textarea class="form-control" type="text" id="message" name="message" required placeholder="Type email"></textarea>
+										</div>
+
+									<br>
+									<h6 class="card-subtitle mb-2">Send before</h6>
+
+									<div class="form-row align-items-center">
+										<div class="col">
+											<div class="input-group input-group-sm form-group">
+												<div class="input-group-prepend">
+													<div class="input-group-text">
+														<input name="schedulerType" id="byFixedDate" type="radio" aria-label="Radio button for following text input">
+													</div>
+												</div>
+												<input name="howMany" id="howMany" class="form-control form-control-sm require-group" type="number" placeholder="How many"/>
+												<select id="howManyWhat" name="howManyWhat" class="form-control form-control-sm require-group selectpicker">
+													<option value="" disabled selected>days or months</option>
+													<option value="D">Days</option>
+													<option value="M">Months</option>
+												</select>
+											   	<div class="input-group-append">
+												   <span class="input-group-text" id="before">before</span>
+												</div>
+												<select name="fixedDate" id="fixedDate" class="form-control form-control-sm require-group selectpicker " aria-describedby="before">
+													<option value="" disabled selected>specific date</option>
+													<option th:each="date : ${clientFixedDates}" th:value="${date.value}" th:text="${date.key}" th:data-subtext="${date.value}"/>
+												</select>
+											</div>
+										</div>
+									</div>
+
+									<br>
+									<h6 class="card-subtitle mb-2">Send on</h6>
+
+									<div class="form-row align-items-center">
+										<div class="col">
+											<div class="input-group form-group">
+												<div class="input-group-prepend">
+													<div class="input-group-text">
+														<input name="schedulerType" id="byCustomDate" type="radio" aria-label="Radio button for following text input">
+													</div>
+												</div>
+												<input name="customDate" id="customDate" class="form-control form-control-sm datepicker require-group" type="date"/>
+												<input name="customTime" id="customTime" class="form-control form-control-sm datepicker require-group" type="time"/>
+											</div>
+										</div>
+									</div>
+
+										<br>
+										<h6 class="card-subtitle mb-2">Send after</h6>
+
+										<div class="form-row align-items-center">
+											<div class="col">
+												<div class="input-group input-group-sm form-group">
+													<div class="input-group-prepend">
+														<div class="input-group-text">
+															<input name="schedulerType" id="byHours" type="radio" aria-label="Radio button for following text input">
+														</div>
+													</div>
+													<input id="hours" name="hours" type="number" placeholder="Hours" class="form-control form-control-sm require-group" aria-label="Text input with radio button" aria-describedby="hours-from-now">
+												  	<div class="input-group-append">
+													   <span class="input-group-text" id="hours-from-now">hours from now</span>
+													</div>
+												</div>
+
+											</div>
+										</div>
+
+										<div class="form-row align-items-center">
+											<div class="col">
+												<div class="input-group input-group-sm form-group">
+													<div class="input-group-prepend">
+														<div class="input-group-text">
+															<input name="schedulerType" id="byDays" type="radio" aria-label="Radio button for following text input">
+														</div>
+													</div>
+													<input id="days" name="days" type="number" placeholder="Days" class="form-control form-control-sm require-group" aria-label="Text input with radio button" aria-describedby="days-from-now">
+													<div class="input-group-append">
+													   <span class="input-group-text" id="days-from-now">days from now</span>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<br>
+										<h6 class="card-subtitle mb-2">Send in accordance to recurrency pattern</h6>
+
+									<div class="form-row align-items-center">
+										<div class="col">
+											<div class="input-group form-group">
+												<div class="input-group-prepend">
+													<div class="input-group-text">
+														<input name="schedulerType" id="byPattern" type="radio" aria-label="Radio button for following text input">
+													</div>
+												</div>
+												<select id="pattern" name="pattern" class="form-control form-control-sm require-group selectpicker" title="Pick pattern">
+													<option></option>
+													<option value="D">Daily</option>
+													<option value="W">Weekly</option>
+													<option value="M">Monthly</option>
+													<option value="Y">Yearly</option>
+												</select>
+											</div>
+										</div>
+									</div>
+
+
+								</div>
+								<div class="modal-footer">
+									<button id="schedule-button" class="btn-primary btn btn-sm ml-auto mr-auto" type="button" onclick="app.submitAndCallback(this.form, scheduleEmailScript.callback)">Schedule</button>
+								</div>
+							</form>
+
+						</div>
+					</div>
+				</div>
+
+				<script>
+					// self executing function here
+					(function() {
+						const atLeastOneFilled = inputs => Array.from(inputs).some(input => input.value !== null && input.value !== "");
+						let byHours = document.getElementById("byHours"),
+							hours = document.getElementById("hours"),
+							byDays = document.getElementById("byDays"),
+							days = document.getElementById("days"),
+							byFixedDate = document.getElementById("byFixedDate"),
+							fixedDate = document.getElementById("fixedDate"),
+							byCustomDate = document.getElementById("byCustomDate"),
+							customDate = document.getElementById("customDate"),
+							customTime = document.getElementById("customTime"),
+							pattern = document.getElementById("pattern"),
+							byPattern = document.getElementById("byPattern"),
+							requireGroup = document.getElementsByClassName("require-group"),
+							scheduleBtn = document.getElementById("schedule-button");
+
+						scheduleBtn.disabled = true;
+
+						byHours.addEventListener("click", () => hours.focus());
+						byDays.addEventListener("click", () => days.focus());
+						byFixedDate.addEventListener("click", () => fixedDate.focus());
+						byCustomDate.addEventListener("click", () => customDate.focus());
+						byPattern.addEventListener("click", () => pattern.focus());
+
+						byHours.addEventListener("click", () => pattern.selectedIndex = -1);
+						byDays.addEventListener("click", () => pattern.selectedIndex = -1);
+						byFixedDate.addEventListener("click", () => pattern.selectedIndex = -1);
+						byCustomDate.addEventListener("click", () => pattern.selectedIndex = -1);
+
+						pattern.addEventListener("change", () => {
+							byHours.checked = false;
+							byDays.checked = false;
+							byFixedDate.checked = false;
+							byCustomDate.checked = false;
+							byCustomDate.checked = false;
+							byPattern.checked = true;
+						});
+
+						hours.addEventListener("click", () => byHours.checked = true);
+						days.addEventListener("click", () => byDays.checked = true);
+						fixedDate.addEventListener("change", () => byFixedDate.checked = true);
+						customDate.addEventListener("change", () => byCustomDate.checked = true);
+						customTime.addEventListener("change", () => byCustomDate.checked = true);
+
+						hours.addEventListener("click", () => pattern.selectedIndex = -1);
+						days.addEventListener("click", () => pattern.selectedIndex = -1);
+						fixedDate.addEventListener("change", () => pattern.selectedIndex = -1);
+						customDate.addEventListener("change", () => pattern.selectedIndex = -1);
+						customTime.addEventListener("change", () => pattern.selectedIndex = -1);
+
+						Array.from(requireGroup).forEach(input => {
+							input.addEventListener("input", function() {
+								scheduleBtn.disabled = !atLeastOneFilled(requireGroup);
+							});
+							input.addEventListener("blur", function() {
+								scheduleBtn.disabled = !atLeastOneFilled(requireGroup);
+							});
+						});
+
+					})();
+				</script>
+
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

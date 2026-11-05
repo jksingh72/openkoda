@@ -1,0 +1,13 @@
+!!com.openkoda.service.export.dto.FrontendResourceConversionDto
+"accessLevel": "GLOBAL"
+"content": "templates/ui-component/global/calendar.html"
+"controllerEndpoints": [
+  ]
+"embeddable": !!bool "true"
+"includeInSitemap": !!bool "false"
+"module": "core"
+"name": "calendar"
+"organizationId": !!null "null"
+"requiredPrivilege": !!null "null"
+"resourceType": "UI_COMPONENT"
+"type": "HTML"

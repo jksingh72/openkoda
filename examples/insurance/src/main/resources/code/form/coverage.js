@@ -1,0 +1,8 @@
+a => a.datalist("coverageTypes", d => d.toLinkedMap(["LIFE", "HEALTH", "AUTO", "PROPERTY", "TRAVEL"]))
+                    .dropdown("coverageType", "coverageTypes")
+                    .text("coverageName")
+                    .text("coverageDescription")
+                    .number("coverageAmount")
+                    .manyToOne("productId","product")
+                    .number("basePremium")
+                    .files("filesId", (f,r) => r.getFileDtos(f.entity), "image/png,image/jpeg,application/pdf")

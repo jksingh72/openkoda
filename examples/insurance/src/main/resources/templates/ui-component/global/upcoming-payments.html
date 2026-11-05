@@ -1,0 +1,80 @@
+<!--DEFAULT CONTENT-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="en" layout:decorate="~{${defaultLayout}}">
+<body>
+<div class="container">
+    <h1 layout:fragment="title"/>
+    <div layout:fragment="content">
+	  <script>
+		var upcomingPaymentsScript = {
+		  "callback": function(result) {
+			$('#sendEmailModal').modal('hide');
+			alert("Email sent");
+		  }
+		}
+	  </script>
+        <div class="card shadow mb-4">
+		  <div class="card-header d-flex flex-row align-items-center">
+			<h6 class="m-0 font-weight-bold">Upcoming Payments</h6>
+		  </div>
+		  <div class="card-body">
+				<div class="table-responsive">
+          			<table class="table table-hover">
+					  <thead>
+						<th>Date</th>
+						<th>Name</th>
+						<th>Amount</th>
+						<th></th>
+					  </thead>
+					  <tbody>
+						<tr th:each="payment : ${payments}">
+						  <td><th:block th:text="${payment.paymentDueDate}"></th:block></td>
+						  <td><th:block th:text="${policy.policyName}"></th:block></td>
+						  <td><th:block th:text="${#numbers.formatDecimal(payment.amount, 1, 2, 'DEFAULT')}"></th:block></td>
+						  <td>
+							  <div class="table-row-btns">
+
+								<a class="" th:title="#{template.view}" data-toggle="modal" data-target="#sendEmailModal">
+								  <i class="fas fa-envelope text-primary"></i>
+								</a>
+							  </div>
+						  </td>
+						</tr>
+					  </tbody>
+					</table>
+
+					<!-- Modal -->
+					<div class="modal fade" id="sendEmailModal" tabindex="-1" role="dialog" aria-labelledby="sendEmailModalLabel" aria-hidden="true">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+
+								<form action="../../cn/upcoming-payments" method="post">
+								  <input th:replace="~{forms::csrf}"/>
+									<div class="modal-header">
+										<h5 class="modal-title" id="sendEmailModalLabel">Send Email</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<div class="modal-body">
+										<input type="hidden" id="policyId" name="policyId" th:value="${policyId}"/>
+										<div class="form-group">
+											<textarea class="form-control" type="text" id="message" name="message" required placeholder="type email"></textarea>
+										</div>
+									</div>
+									<div class="modal-footer">
+										<button th:disabled="${isDisabled}" class="btn-primary btn btn-sm" type="button" onclick="app.submitAndCallback(this.form, upcomingPaymentsScript.callback)">Send</button>
+									</div>
+								</form>
+
+							</div>
+						</div>
+					</div>
+				  </div>
+		  </div>
+
+	  </div>
+    </div>
+</div>
+</body>
+</html>

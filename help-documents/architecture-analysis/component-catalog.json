@@ -1,0 +1,841 @@
+{
+  "analysis_scope": {
+    "roots_inspected": [
+      "/home/jksingh/openkoda/pom.xml",
+      "/home/jksingh/openkoda/openkoda-app/pom.xml",
+      "/home/jksingh/openkoda/openkoda/pom.xml",
+      "/home/jksingh/openkoda/openkoda/src/main/java",
+      "/home/jksingh/openkoda/openkoda/src/main/resources",
+      "/home/jksingh/openkoda/openkoda/src/test",
+      "/home/jksingh/openkoda/docker",
+      "/home/jksingh/openkoda/scripts",
+      "/home/jksingh/openkoda/examples"
+    ],
+    "excluded_paths": [
+      "/home/jksingh/openkoda/web",
+      "/home/jksingh/openkoda/openkoda/target",
+      "/home/jksingh/openkoda/openkoda/build",
+      "/home/jksingh/openkoda/.git",
+      "/home/jksingh/openkoda/.kiro",
+      "/home/jksingh/openkoda/.vscode",
+      "/home/jksingh/openkoda/openkoda/src/main/resources/public/vendor"
+    ],
+    "coverage_notes": [
+      "Analysis inspected all 623 production Java classes, 38 test classes, 89 HTML templates, Maven build definitions, and Docker deployment artifacts.",
+      "Excluded the user-created 'web' directory per explicit instructions.",
+      "Third-party vendored client-side JavaScript/CSS libraries under public/vendor were excluded from deep AST analysis."
+    ]
+  },
+  "components": [
+    {
+      "name": "OpenkodaApp",
+      "path": "openkoda/src/main/java/com/openkoda/OpenkodaApp.java",
+      "symbol": "com.openkoda.OpenkodaApp",
+      "granularity": "file",
+      "primary_responsibility": "Bootstrap / composition",
+      "secondary_responsibilities": [
+        "Configuration loading",
+        "Pre-flight orchestration"
+      ],
+      "business_capability": "Dynamic Data Model & Low-Code Engine",
+      "deployment_unit": "openkoda.jar",
+      "cross_cutting_concerns": [
+        "Configuration and feature flags"
+      ],
+      "dependencies": [
+        {
+          "target": "com.openkoda.JDBCApp",
+          "relationship": "calls",
+          "evidence": ["OpenkodaApp.java:30"]
+        },
+        {
+          "target": "com.openkoda.service.dynamicentity.DynamicEntityRegistrationService",
+          "relationship": "calls",
+          "evidence": ["OpenkodaApp.java:32"]
+        },
+        {
+          "target": "com.openkoda.App",
+          "relationship": "calls",
+          "evidence": ["OpenkodaApp.java:34"]
+        }
+      ],
+      "evidence_status": "confirmed",
+      "confidence": "high",
+      "evidence": [
+        {
+          "path": "openkoda/src/main/java/com/openkoda/OpenkodaApp.java",
+          "symbol": "main",
+          "line_start": 22,
+          "line_end": 35,
+          "observation": "Main entry point orchestrating pre-flight JDBC inspection, dynamic bytecode class generation, and Spring Boot bootstrap."
+        }
+      ],
+      "notes": [
+        "Initiates the two-stage startup pipeline required for dynamic entity compilation."
+      ]
+    },
+    {
+      "name": "JDBCApp",
+      "path": "openkoda/src/main/java/com/openkoda/JDBCApp.java",
+      "symbol": "com.openkoda.JDBCApp",
+      "granularity": "file",
+      "primary_responsibility": "Bootstrap / composition",
+      "secondary_responsibilities": [
+        "Database migrations",
+        "Dynamic entity metadata extraction"
+      ],
+      "business_capability": "Dynamic Data Model & Low-Code Engine",
+      "deployment_unit": "openkoda.jar",
+      "cross_cutting_concerns": [
+        "Transaction management",
+        "Configuration and feature flags"
+      ],
+      "dependencies": [
+        {
+          "target": "com.openkoda.service.upgrade.DbVersionService",
+          "relationship": "calls",
+          "evidence": ["JDBCApp.java:80"]
+        },
+        {
+          "target": "com.openkoda.service.dynamicentity.DynamicEntityRegistrationService",
+          "relationship": "calls",
+          "evidence": ["JDBCApp.java:104"]
+        }
+      ],
+      "evidence_status": "confirmed",
+      "confidence": "high",
+      "evidence": [
+        {
+          "path": "openkoda/src/main/java/com/openkoda/JDBCApp.java",
+          "symbol": "main",
+          "line_start": 30,
+          "line_end": 125,
+          "observation": "Opens raw JDBC connection before Spring Boot starts to apply DB version upgrades and load forms for dynamic entities."
+        }
+      ],
+      "notes": [
+        "Operates independently of Hibernate and Spring ApplicationContext."
+      ]
+    },
+    {
+      "name": "App",
+      "path": "openkoda/src/main/java/com/openkoda/App.java",
+      "symbol": "com.openkoda.App",
+      "granularity": "file",
+      "primary_responsibility": "Bootstrap / composition",
+      "secondary_responsibilities": [
+        "Persistence configuration",
+        "Dynamic context restart"
+      ],
+      "business_capability": "Dynamic Data Model & Low-Code Engine",
+      "deployment_unit": "openkoda.jar",
+      "cross_cutting_concerns": [
+        "Caching",
+        "Transaction management"
+      ],
+      "dependencies": [
+        {
+          "target": "org.springframework.boot.SpringApplication",
+          "relationship": "calls",
+          "evidence": ["App.java:95"]
+        },
+        {
+          "target": "com.openkoda.service.dynamicentity.DynamicEntityRegistrationService",
+          "relationship": "calls",
+          "evidence": ["App.java:152"]
+        }
+      ],
+      "evidence_status": "confirmed",
+      "confidence": "high",
+      "evidence": [
+        {
+          "path": "openkoda/src/main/java/com/openkoda/App.java",
+          "symbol": "restart",
+          "line_start": 131,
+          "line_end": 163,
+          "observation": "Provides programmatic in-process restart capabilities to recompile ByteBuddy entity descriptors and reboot Spring container."
+        },
+        {
+          "path": "openkoda/src/main/java/com/openkoda/App.java",
+          "symbol": "persistenceUnitPostProcessor",
+          "line_start": 165,
+          "line_end": 171,
+          "observation": "Injects generated dynamic entity class names into JPA PersistenceUnitPostProcessor."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "name": "DynamicEntityRegistrationService",
+      "path": "openkoda/src/main/java/com/openkoda/service/dynamicentity/DynamicEntityRegistrationService.java",
+      "symbol": "com.openkoda.service.dynamicentity.DynamicEntityRegistrationService",
+      "granularity": "file",
+      "primary_responsibility": "Low-Code Bytecode Synthesis",
+      "secondary_responsibilities": [
+        "Persistence / data access",
+        "Application orchestration"
+      ],
+      "business_capability": "Dynamic Data Model & Low-Code Engine",
+      "deployment_unit": "openkoda.jar",
+      "cross_cutting_concerns": [],
+      "dependencies": [
+        {
+          "target": "net.bytebuddy.ByteBuddy",
+          "relationship": "calls",
+          "evidence": ["DynamicEntityRegistrationService.java:18"]
+        },
+        {
+          "target": "org.springframework.data.jpa.repository.support.JpaRepositoryFactory",
+          "relationship": "calls",
+          "evidence": ["DynamicEntityRegistrationService.java:76"]
+        },
+        {
+          "target": "com.openkoda.repository.SearchableRepositories",
+          "relationship": "calls",
+          "evidence": ["DynamicEntityRegistrationService.java:76"]
+        }
+      ],
+      "evidence_status": "confirmed",
+      "confidence": "high",
+      "evidence": [
+        {
+          "path": "openkoda/src/main/java/com/openkoda/service/dynamicentity/DynamicEntityRegistrationService.java",
+          "symbol": "buildAndLoadDynamicClasses",
+          "line_start": 104,
+          "line_end": 142,
+          "observation": "Generates unloaded ByteBuddy classes, loads them into ClassLoader, synthesizes dynamic repositories, and registers them."
+        }
+      ],
+      "notes": [
+        "Central engine for Openkoda runtime metadata-driven dynamic entities."
+      ]
+    },
+    {
+      "name": "Flow",
+      "path": "openkoda/src/main/java/com/openkoda/core/flow/Flow.java",
+      "symbol": "com.openkoda.core.flow.Flow",
+      "granularity": "file",
+      "primary_responsibility": "Application / use-case orchestration",
+      "secondary_responsibilities": [
+        "Presentation logic / client state",
+        "Transaction management"
+      ],
+      "business_capability": "Polyglot Scripting & ServerJS Flow Execution",
+      "deployment_unit": "openkoda.jar",
+      "cross_cutting_concerns": [
+        "Error handling",
+        "Transaction management"
+      ],
+      "dependencies": [
+        {
+          "target": "com.openkoda.core.flow.PageModelMap",
+          "relationship": "writes",
+          "evidence": ["Flow.java:178"]
+        },
+        {
+          "target": "com.openkoda.core.flow.TransactionalExecutor",
+          "relationship": "calls",
+          "evidence": ["Flow.java:307"]
+        }
+      ],
+      "evidence_status": "confirmed",
+      "confidence": "high",
+      "evidence": [
+        {
+          "path": "openkoda/src/main/java/com/openkoda/core/flow/Flow.java",
+          "symbol": "then",
+          "line_start": 108,
+          "line_end": 112,
+          "observation": "Chains functional transformation steps in a monadic pipeline."
+        },
+        {
+          "path": "openkoda/src/main/java/com/openkoda/core/flow/Flow.java",
+          "symbol": "executeFlow",
+          "line_start": 298,
+          "line_end": 337,
+          "observation": "Executes pipeline, applies transactional executor if present, catches exceptions, and maps them to PageModelMap."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "name": "JsFlowRunner",
+      "path": "openkoda/src/main/java/com/openkoda/uicomponent/JsFlowRunner.java",
+      "symbol": "com.openkoda.uicomponent.JsFlowRunner",
+      "granularity": "file",
+      "primary_responsibility": "Polyglot Scripting Engine",
+      "secondary_responsibilities": [
+        "Application / use-case orchestration"
+      ],
+      "business_capability": "Polyglot Scripting & ServerJS Flow Execution",
+      "deployment_unit": "openkoda.jar",
+      "cross_cutting_concerns": [
+        "Security"
+      ],
+      "dependencies": [
+        {
+          "target": "org.graalvm.polyglot.Context",
+          "relationship": "calls",
+          "evidence": ["JsFlowRunner.java:73-80"]
+        },
+        {
+          "target": "com.openkoda.uicomponent.live.LiveComponentProvider",
+          "relationship": "binds",
+          "evidence": ["JsFlowRunner.java:60"]
+        },
+        {
+          "target": "com.openkoda.core.flow.Flow",
+          "relationship": "binds",
+          "evidence": ["JsFlowRunner.java:82"]
+        }
+      ],
+      "evidence_status": "confirmed",
+      "confidence": "high",
+      "evidence": [
+        {
+          "path": "openkoda/src/main/java/com/openkoda/uicomponent/JsFlowRunner.java",
+          "symbol": "evaluateJsFlow",
+          "line_start": 72,
+          "line_end": 100,
+          "observation": "Configures GraalVM Polyglot JS context with HostAccess.ALL and injects Flow and LiveComponentProvider into script scope."
+        }
+      ],
+      "notes": [
+        "Exposes broad JVM access to JavaScript runtime scripts."
+      ]
+    },
+    {
+      "name": "CRUDControllerHtml",
+      "path": "openkoda/src/main/java/com/openkoda/controller/CRUDControllerHtml.java",
+      "symbol": "com.openkoda.controller.CRUDControllerHtml",
+      "granularity": "file",
+      "primary_responsibility": "Inbound interfaces",
+      "secondary_responsibilities": [
+        "Presentation / UI",
+        "Application / use-case orchestration"
+      ],
+      "business_capability": "Dynamic Data Model & Low-Code Engine",
+      "deployment_unit": "openkoda.jar",
+      "cross_cutting_concerns": [
+        "Authentication and authorization",
+        "Transaction management"
+      ],
+      "dependencies": [
+        {
+          "target": "com.openkoda.core.flow.Flow",
+          "relationship": "calls",
+          "evidence": ["CRUDControllerHtml.java:127", "CRUDControllerHtml.java:230"]
+        },
+        {
+          "target": "com.openkoda.core.form.CRUDControllerConfiguration",
+          "relationship": "reads",
+          "evidence": ["CRUDControllerHtml.java:105", "CRUDControllerHtml.java:223"]
+        },
+        {
+          "target": "com.openkoda.repository.SecureRepository",
+          "relationship": "calls",
+          "evidence": ["CRUDControllerHtml.java:133", "CRUDControllerHtml.java:232"]
+        }
+      ],
+      "evidence_status": "confirmed",
+      "confidence": "high",
+      "evidence": [
+        {
+          "path": "openkoda/src/main/java/com/openkoda/controller/CRUDControllerHtml.java",
+          "symbol": "getAll",
+          "line_start": 88,
+          "line_end": 153,
+          "observation": "Handles dynamic entity listing requests, applies security checks, searches SecureRepository, and renders generic-all.html."
+        },
+        {
+          "path": "openkoda/src/main/java/com/openkoda/controller/CRUDControllerHtml.java",
+          "symbol": "save",
+          "line_start": 249,
+          "line_end": 271,
+          "observation": "Handles entity update requests with @Transactional annotation directly on controller method."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "name": "CRUDApiController",
+      "path": "openkoda/src/main/java/com/openkoda/controller/api/CRUDApiController.java",
+      "symbol": "com.openkoda.controller.api.CRUDApiController",
+      "granularity": "file",
+      "primary_responsibility": "Inbound interfaces",
+      "secondary_responsibilities": [
+        "Contracts / boundary models"
+      ],
+      "business_capability": "Dynamic Data Model & Low-Code Engine",
+      "deployment_unit": "openkoda.jar",
+      "cross_cutting_concerns": [
+        "Authentication and authorization"
+      ],
+      "dependencies": [
+        {
+          "target": "com.openkoda.core.flow.Flow",
+          "relationship": "calls",
+          "evidence": ["CRUDApiController.java:55"]
+        },
+        {
+          "target": "com.openkoda.repository.SecureRepository",
+          "relationship": "calls",
+          "evidence": ["CRUDApiController.java:62"]
+        }
+      ],
+      "evidence_status": "confirmed",
+      "confidence": "high",
+      "evidence": [
+        {
+          "path": "openkoda/src/main/java/com/openkoda/controller/api/CRUDApiController.java",
+          "symbol": "getAll",
+          "line_start": 50,
+          "line_end": 80,
+          "observation": "Provides headless REST API endpoints for all dynamic and static entities under /api/v1."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "name": "WebSecurityConfig",
+      "path": "openkoda/src/main/java/com/openkoda/core/configuration/WebSecurityConfig.java",
+      "symbol": "com.openkoda.core.configuration.WebSecurityConfig",
+      "granularity": "file",
+      "primary_responsibility": "Bootstrap / composition",
+      "secondary_responsibilities": [
+        "Cross-cutting security definition"
+      ],
+      "business_capability": "Identity, Authentication & Role-Based Access Control (RBAC)",
+      "deployment_unit": "openkoda.jar",
+      "cross_cutting_concerns": [
+        "Authentication and authorization"
+      ],
+      "dependencies": [
+        {
+          "target": "com.openkoda.core.security.OrganizationUserDetailsService",
+          "relationship": "binds",
+          "evidence": ["WebSecurityConfig.java:103"]
+        },
+        {
+          "target": "com.openkoda.core.security.ApiTokenHeaderAuthenticationFilter",
+          "relationship": "binds",
+          "evidence": ["WebSecurityConfig.java:112"]
+        }
+      ],
+      "evidence_status": "confirmed",
+      "confidence": "high",
+      "evidence": [
+        {
+          "path": "openkoda/src/main/java/com/openkoda/core/configuration/WebSecurityConfig.java",
+          "symbol": "webSecurityFilterChain",
+          "line_start": 158,
+          "line_end": 186,
+          "observation": "Configures ordered multi-chain Spring Security filters separating web HTML, API v1, API v2, and public routes."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "name": "MultitenancyService",
+      "path": "openkoda/src/main/java/com/openkoda/core/multitenancy/MultitenancyService.java",
+      "symbol": "com.openkoda.core.multitenancy.MultitenancyService",
+      "granularity": "file",
+      "primary_responsibility": "Domain / business rules",
+      "secondary_responsibilities": [
+        "Persistence / data access"
+      ],
+      "business_capability": "Multi-Tenancy & Organization Management",
+      "deployment_unit": "openkoda.jar",
+      "cross_cutting_concerns": [
+        "Transaction management"
+      ],
+      "dependencies": [
+        {
+          "target": "com.openkoda.core.multitenancy.QueryExecutor",
+          "relationship": "calls",
+          "evidence": ["MultitenancyService.java:45"]
+        },
+        {
+          "target": "com.openkoda.core.multitenancy.TenantResolver",
+          "relationship": "calls",
+          "evidence": ["MultitenancyService.java:55"]
+        }
+      ],
+      "evidence_status": "confirmed",
+      "confidence": "high",
+      "evidence": [
+        {
+          "path": "openkoda/src/main/java/com/openkoda/core/multitenancy/MultitenancyService.java",
+          "symbol": "createTenant",
+          "line_start": 60,
+          "line_end": 120,
+          "observation": "Manages tenant creation, schema generation (CREATE SCHEMA org_<id>), and table replication."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "name": "TenantResolver",
+      "path": "openkoda/src/main/java/com/openkoda/core/multitenancy/TenantResolver.java",
+      "symbol": "com.openkoda.core.multitenancy.TenantResolver",
+      "granularity": "file",
+      "primary_responsibility": "Ports / abstractions",
+      "secondary_responsibilities": [
+        "Persistence / data access"
+      ],
+      "business_capability": "Multi-Tenancy & Organization Management",
+      "deployment_unit": "openkoda.jar",
+      "cross_cutting_concerns": [
+        "Concurrency"
+      ],
+      "dependencies": [
+        {
+          "target": "org.hibernate.context.spi.CurrentTenantIdentifierResolver",
+          "relationship": "implements",
+          "evidence": ["TenantResolver.java:43"]
+        }
+      ],
+      "evidence_status": "confirmed",
+      "confidence": "high",
+      "evidence": [
+        {
+          "path": "openkoda/src/main/java/com/openkoda/core/multitenancy/TenantResolver.java",
+          "symbol": "resolveCurrentTenantIdentifier",
+          "line_start": 43,
+          "line_end": 100,
+          "observation": "Implements Hibernate CurrentTenantIdentifierResolver using a ThreadLocal TenantedResource context."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "name": "FrontendResourceOrClassLoaderTemplateResolver",
+      "path": "openkoda/src/main/java/com/openkoda/core/configuration/FrontendResourceOrClassLoaderTemplateResolver.java",
+      "symbol": "com.openkoda.core.configuration.FrontendResourceOrClassLoaderTemplateResolver",
+      "granularity": "file",
+      "primary_responsibility": "Presentation / UI",
+      "secondary_responsibilities": [
+        "Persistence / data access"
+      ],
+      "business_capability": "CMS, UI Components & Page Builder",
+      "deployment_unit": "openkoda.jar",
+      "cross_cutting_concerns": [
+        "Caching"
+      ],
+      "dependencies": [
+        {
+          "target": "org.thymeleaf.templateresolver.ClassLoaderTemplateResolver",
+          "relationship": "implements",
+          "evidence": ["FrontendResourceOrClassLoaderTemplateResolver.java:57"]
+        },
+        {
+          "target": "com.openkoda.core.service.FrontendResourceService",
+          "relationship": "calls",
+          "evidence": ["FrontendResourceOrClassLoaderTemplateResolver.java:74"]
+        }
+      ],
+      "evidence_status": "confirmed",
+      "confidence": "high",
+      "evidence": [
+        {
+          "path": "openkoda/src/main/java/com/openkoda/core/configuration/FrontendResourceOrClassLoaderTemplateResolver.java",
+          "symbol": "computeTemplateResource",
+          "line_start": 57,
+          "line_end": 120,
+          "observation": "Intercepts Thymeleaf template resolution for names prefixed with 'frontend-resource#' to fetch HTML from DB."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "name": "SearchableFunctionalRepositoryWithLongId",
+      "path": "openkoda/src/main/java/com/openkoda/core/repository/common/SearchableFunctionalRepositoryWithLongId.java",
+      "symbol": "com.openkoda.core.repository.common.SearchableFunctionalRepositoryWithLongId",
+      "granularity": "file",
+      "primary_responsibility": "Persistence / data access",
+      "secondary_responsibilities": [
+        "Authentication and authorization",
+        "Domain / business rules"
+      ],
+      "business_capability": "Dynamic Data Model & Low-Code Engine",
+      "deployment_unit": "openkoda.jar",
+      "cross_cutting_concerns": [
+        "Authentication and authorization"
+      ],
+      "dependencies": [
+        {
+          "target": "org.springframework.data.jpa.repository.JpaSpecificationExecutor",
+          "relationship": "implements",
+          "evidence": ["SearchableFunctionalRepositoryWithLongId.java:66"]
+        },
+        {
+          "target": "com.openkoda.core.security.UserProvider",
+          "relationship": "calls",
+          "evidence": ["SearchableFunctionalRepositoryWithLongId.java:74"]
+        }
+      ],
+      "evidence_status": "confirmed",
+      "confidence": "high",
+      "evidence": [
+        {
+          "path": "openkoda/src/main/java/com/openkoda/core/repository/common/SearchableFunctionalRepositoryWithLongId.java",
+          "symbol": "hasWritePrivilegeForEntity",
+          "line_start": 68,
+          "line_end": 88,
+          "observation": "Directly inspects UserProvider security context inside repository specification to enforce write authorization."
+        }
+      ],
+      "notes": [
+        "Embeds security authorization rules directly into data persistence interfaces."
+      ]
+    },
+    {
+      "name": "ApplicationEventService",
+      "path": "openkoda/src/main/java/com/openkoda/core/service/event/ApplicationEventService.java",
+      "symbol": "com.openkoda.core.service.event.ApplicationEventService",
+      "granularity": "file",
+      "primary_responsibility": "Messaging / asynchronous transport",
+      "secondary_responsibilities": [
+        "Application / use-case orchestration"
+      ],
+      "business_capability": "Event Bus, Scheduling & Notification Engine",
+      "deployment_unit": "openkoda.jar",
+      "cross_cutting_concerns": [
+        "Concurrency"
+      ],
+      "dependencies": [
+        {
+          "target": "java.util.concurrent.ExecutorService",
+          "relationship": "calls",
+          "evidence": ["ApplicationEventService.java:49"]
+        }
+      ],
+      "evidence_status": "confirmed",
+      "confidence": "high",
+      "evidence": [
+        {
+          "path": "openkoda/src/main/java/com/openkoda/core/service/event/ApplicationEventService.java",
+          "symbol": "emitEventAsync",
+          "line_start": 193,
+          "line_end": 220,
+          "observation": "Dispatches asynchronous events to a fixed thread pool of 4 workers and delivers them to registered EventConsumers."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "name": "ClusterEventSenderService",
+      "path": "openkoda/src/main/java/com/openkoda/core/service/event/ClusterEventSenderService.java",
+      "symbol": "com.openkoda.core.service.event.ClusterEventSenderService",
+      "granularity": "file",
+      "primary_responsibility": "Messaging / asynchronous transport",
+      "secondary_responsibilities": [],
+      "business_capability": "Event Bus, Scheduling & Notification Engine",
+      "deployment_unit": "openkoda.jar",
+      "cross_cutting_concerns": [],
+      "dependencies": [
+        {
+          "target": "com.openkoda.core.helper.ClusterHelper",
+          "relationship": "calls",
+          "evidence": ["ClusterEventSenderService.java:27"]
+        }
+      ],
+      "evidence_status": "confirmed",
+      "confidence": "high",
+      "evidence": [
+        {
+          "path": "openkoda/src/main/java/com/openkoda/core/service/event/ClusterEventSenderService.java",
+          "symbol": "loadScheduler",
+          "line_start": 39,
+          "line_end": 46,
+          "observation": "Publishes ClusterEvent to Hazelcast CLUSTER_EVENT_TOPIC to synchronize schedulers across nodes."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "name": "PropertyChangeInterceptor",
+      "path": "openkoda/src/main/java/com/openkoda/core/audit/PropertyChangeInterceptor.java",
+      "symbol": "com.openkoda.core.audit.PropertyChangeInterceptor",
+      "granularity": "file",
+      "primary_responsibility": "Logging, metrics, tracing, and auditing",
+      "secondary_responsibilities": [
+        "Persistence / data access"
+      ],
+      "business_capability": "Audit Logging, Observability & System Diagnostics",
+      "deployment_unit": "openkoda.jar",
+      "cross_cutting_concerns": [
+        "Logging, metrics, tracing, and auditing",
+        "Transaction management"
+      ],
+      "dependencies": [
+        {
+          "target": "org.hibernate.Interceptor",
+          "relationship": "implements",
+          "evidence": ["PropertyChangeInterceptor.java:48"]
+        }
+      ],
+      "evidence_status": "confirmed",
+      "confidence": "high",
+      "evidence": [
+        {
+          "path": "openkoda/src/main/java/com/openkoda/core/audit/PropertyChangeInterceptor.java",
+          "symbol": "onFlushDirty",
+          "line_start": 48,
+          "line_end": 75,
+          "observation": "Session-scoped Hibernate interceptor capturing entity property mutations within active transactions."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "name": "DbVersionService",
+      "path": "openkoda/src/main/java/com/openkoda/service/upgrade/DbVersionService.java",
+      "symbol": "com.openkoda.service.upgrade.DbVersionService",
+      "granularity": "file",
+      "primary_responsibility": "Persistence / data access",
+      "secondary_responsibilities": [
+        "Bootstrap / composition"
+      ],
+      "business_capability": "Dynamic Data Model & Low-Code Engine",
+      "deployment_unit": "openkoda.jar",
+      "cross_cutting_concerns": [
+        "Configuration and feature flags"
+      ],
+      "dependencies": [
+        {
+          "target": "java.sql.Connection",
+          "relationship": "calls",
+          "evidence": ["DbVersionService.java:17"]
+        }
+      ],
+      "evidence_status": "confirmed",
+      "confidence": "high",
+      "evidence": [
+        {
+          "path": "openkoda/src/main/java/com/openkoda/service/upgrade/DbVersionService.java",
+          "symbol": "tryUpgade",
+          "line_start": 34,
+          "line_end": 100,
+          "observation": "Parses core_upgrade.sql for version comments and executes incremental DDL scripts against PostgreSQL."
+        }
+      ],
+      "notes": [
+        "Custom SQL migration runner instead of Flyway or Liquibase."
+      ]
+    },
+    {
+      "name": "GitHubIntegrationConsumers",
+      "path": "openkoda/src/main/java/com/openkoda/integration/consumer/GitHubIntegrationConsumers.java",
+      "symbol": "com.openkoda.integration.consumer.GitHubIntegrationConsumers",
+      "granularity": "file",
+      "primary_responsibility": "Outbound integrations",
+      "secondary_responsibilities": [
+        "Messaging / asynchronous transport"
+      ],
+      "business_capability": "External Systems & Issue Tracking Integrations",
+      "deployment_unit": "openkoda.jar",
+      "cross_cutting_concerns": [
+        "Error handling"
+      ],
+      "dependencies": [
+        {
+          "target": "org.springframework.web.client.RestTemplate",
+          "relationship": "calls",
+          "evidence": ["GitHubIntegrationConsumers.java:45"]
+        }
+      ],
+      "evidence_status": "confirmed",
+      "confidence": "high",
+      "evidence": [
+        {
+          "path": "openkoda/src/main/java/com/openkoda/integration/consumer/GitHubIntegrationConsumers.java",
+          "symbol": "createGitHubIssueFromOrgNotification",
+          "line_start": 51,
+          "line_end": 82,
+          "observation": "Dispatches external HTTP POST to GitHub REST API to generate an issue when notifications are emitted."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "name": "ComponentsController",
+      "path": "openkoda/src/main/java/com/openkoda/controller/ComponentsController.java",
+      "symbol": "com.openkoda.controller.ComponentsController",
+      "granularity": "file",
+      "primary_responsibility": "Inbound interfaces",
+      "secondary_responsibilities": [
+        "Packaging and export"
+      ],
+      "business_capability": "Component Packaging, Import & Export",
+      "deployment_unit": "openkoda.jar",
+      "cross_cutting_concerns": [
+        "Authentication and authorization"
+      ],
+      "dependencies": [
+        {
+          "target": "com.openkoda.service.export.ComponentExportService",
+          "relationship": "calls",
+          "evidence": ["ComponentsController.java:57"]
+        }
+      ],
+      "evidence_status": "confirmed",
+      "confidence": "high",
+      "evidence": [
+        {
+          "path": "openkoda/src/main/java/com/openkoda/controller/ComponentsController.java",
+          "symbol": "exportAllResourceToZippedYamls",
+          "line_start": 47,
+          "line_end": 58,
+          "observation": "Exports forms, frontend resources, serverJs, and privileges to a zipped YAML archive."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "name": "ComponentProvider",
+      "path": "openkoda/src/main/java/com/openkoda/controller/ComponentProvider.java",
+      "symbol": "com.openkoda.controller.ComponentProvider",
+      "granularity": "file",
+      "primary_responsibility": "Bootstrap / composition",
+      "secondary_responsibilities": [
+        "Dependency injection mega-aggregator"
+      ],
+      "business_capability": "Dynamic Data Model & Low-Code Engine",
+      "deployment_unit": "openkoda.jar",
+      "cross_cutting_concerns": [],
+      "dependencies": [
+        {
+          "target": "com.openkoda.service.Services",
+          "relationship": "binds",
+          "evidence": ["ComponentProvider.java:47"]
+        },
+        {
+          "target": "com.openkoda.repository.Repositories",
+          "relationship": "binds",
+          "evidence": ["ComponentProvider.java:50"]
+        },
+        {
+          "target": "com.openkoda.controller.Controllers",
+          "relationship": "binds",
+          "evidence": ["ComponentProvider.java:53"]
+        }
+      ],
+      "evidence_status": "confirmed",
+      "confidence": "high",
+      "evidence": [
+        {
+          "path": "openkoda/src/main/java/com/openkoda/controller/ComponentProvider.java",
+          "symbol": "ComponentProvider",
+          "line_start": 44,
+          "line_end": 60,
+          "observation": "Aggregates all Services, Repositories, and Controllers into a single base class inherited across the codebase."
+        }
+      ],
+      "notes": [
+        "Causes universal coupling and requires spring.main.allow-circular-references=true."
+      ]
+    }
+  ]
+}
+
